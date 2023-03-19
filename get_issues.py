@@ -54,25 +54,27 @@ def main():
         stars = repository_details["stargazers_count"]
         primary_language = repository_details["language"]
 
-        if url not in seen_issues:
-            print(f"New good-first-issue found: {url}")
-            seen_issues[url] = state
+        # 检查受托人条件和 star 数量条件
+        if len(assignees) == 0 and stars >= 50 or len(assignees) > 0 and stars >= 5000:
+            if url not in seen_issues:
+                print(f"New good-first-issue found: {url}")
+                seen_issues[url] = state
 
-            new_issue = {
-                "url": url,
-                "state": state,
-                "title": title,
-                "repository_owner": repository_owner,
-                "repository": repository,
-                "created_at": created_at,
-                "updated_at": updated_at,
-                "comments": comments,
-                "labels": ",".join(labels),
-                "stars": stars,
-                "primary_language": primary_language,
-                "assignees": ",".join(assignee_names),
-            }
-            response = client.table("issues").insert([new_issue]).execute()
+                new_issue = {
+                    "url": url,
+                    "state": state,
+                    "title": title,
+                    "repository_owner": repository_owner,
+                    "repository": repository,
+                    "created_at": created_at,
+                    "updated_at": updated_at,
+                    "comments": comments,
+                    "labels": ",".join(labels),
+                    "stars": stars,
+                    "primary_language": primary_language,
+                    "assignees": ",".join(assignee_names),
+                }
+                response = client.table("issues").insert([new_issue]).execute()
 
 
 if __name__ == "__main__":
