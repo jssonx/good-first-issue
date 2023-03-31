@@ -15,16 +15,16 @@ headers = {"Authorization": "Token " + str(PERSONAL_ACCESS_TOKEN)}
 client = supabase.Client(supabase_url, supabase_api_key)  # type: ignore
 
 
-def fetch_issues():
-    now = datetime.datetime.now()
-    one_year_ago = (now - datetime.timedelta(days=365)).strftime("%Y-%m-%d")
-    url = f"https://api.github.com/search/issues?q=label:good-first-issue+state:open+created:>{one_year_ago}&sort=created&order=desc"
+def fetch_repository_details(repository_owner, repository):
+    url = f"https://api.github.com/repos/{repository_owner}/{repository}"
     response = requests.get(url, headers=headers)
     return response.json()
 
 
-def fetch_repository_details(repository_owner, repository):
-    url = f"https://api.github.com/repos/{repository_owner}/{repository}"
+def fetch_issues(label):
+    now = datetime.datetime.now()
+    one_year_ago = (now - datetime.timedelta(days=365)).strftime("%Y-%m-%d")
+    url = f"https://api.github.com/search/issues?q=label:{label}+state:open+created:>{one_year_ago}&sort=created&order=desc"
     response = requests.get(url, headers=headers)
     return response.json()
 
@@ -33,10 +33,14 @@ def main():
     existing_issues = client.table("issues").select("url, state").execute()
     seen_issues = {issue["url"]: issue["state"] for issue in existing_issues.data}
 
-    issues = fetch_issues()
+    labels = ["help-wanted", "good-first-issue", "up-for-grabs", "first-timers-only"]
+    issues = {}
+    for label in labels:
+        issues.update(
+            {issue["html_url"]: issue for issue in fetch_issues(label)["items"]}
+        )
 
-    for issue in issues["items"]:
-        url = issue["html_url"]
+    for url, issue in issues.items():
         state = issue["state"]
         title = issue["title"]
         repository_owner = issue["repository_url"].split("/")[-2]
