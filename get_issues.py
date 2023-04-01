@@ -22,9 +22,7 @@ def fetch_repository_details(repository_owner, repository):
 
 
 def fetch_issues(label):
-    now = datetime.datetime.now()
-    one_year_ago = (now - datetime.timedelta(days=365)).strftime("%Y-%m-%d")
-    url = f"https://api.github.com/search/issues?q=label:{label}+state:open+created:>{one_year_ago}&sort=created&order=desc"
+    url = f"https://api.github.com/search/issues?q=is:issue+label:{label}+state:open&sort=created&order=desc"
     response = requests.get(url, headers=headers)
     return response.json()
 
@@ -33,7 +31,13 @@ def main():
     existing_issues = client.table("issues").select("url, state").execute()
     seen_issues = {issue["url"]: issue["state"] for issue in existing_issues.data}
 
-    labels = ["help-wanted", "good-first-issue", "up-for-grabs", "first-timers-only"]
+    labels = [
+        "help-wanted",
+        "good-first-issue",
+        "up-for-grabs",
+        "first-timers-only",
+        "easy",
+    ]
     issues = {}
     for label in labels:
         issues.update(
