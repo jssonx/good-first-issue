@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 import supabase
 import datetime
 from typing import Dict, Any
-import json
 
 load_dotenv()
 PERSONAL_ACCESS_TOKEN = os.getenv("PERSONAL_ACCESS_TOKEN")
