@@ -22,3 +22,6 @@ Thank you for your time and consideration.
 
 Best regards,
 jsson
+
+## 简洁
+claim

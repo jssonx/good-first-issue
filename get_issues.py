@@ -46,6 +46,10 @@ def main():
         comments = issue["comments"]
         labels = [label["name"] for label in issue["labels"]]
 
+        # 提取受托人信息
+        assignees = issue["assignees"]
+        assignee_names = [assignee["login"] for assignee in assignees]
+
         repository_details = fetch_repository_details(repository_owner, repository)
         stars = repository_details["stargazers_count"]
         primary_language = repository_details["language"]
@@ -66,6 +70,7 @@ def main():
                 "labels": ",".join(labels),
                 "stars": stars,
                 "primary_language": primary_language,
+                "assignees": ",".join(assignee_names),
             }
             response = client.table("issues").insert([new_issue]).execute()
 
