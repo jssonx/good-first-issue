@@ -109,9 +109,10 @@ def main():
                 assignees = len(issue["assignees"]["nodes"])
                 # Check if the issue satisfies the condition and does not exist in supabase
                 if (
-                    (assignees == 0 and stars >= 50)
-                    or (assignees > 0 and stars >= 5000)
-                ) and issue["state"] == "OPEN":
+                    ((assignees == 0 and stars >= 50)
+                    or (assignees > 0 and stars >= 5000))
+                    and issue["state"] == "OPEN"
+                ):
                     print(f"New good-first-issue found: {url}")
                     new_issue = {
                         "url": url,
